@@ -1283,8 +1283,11 @@ __attribute__((noreturn)) static void uncaught_cxx_exception_handler(const BITCr
 #if !defined (HOCKEYSDK_CONFIGURATION_ReleaseCrashOnlyExtensions)
   BITApplicationState appState = [BITHockeyHelper applicationState];
   BOOL isAppInForeground = appState == BITApplicationStateActive || appState == BITApplicationStateInactive;
+  BOOL isAppInBackground = appState == BITApplicationStateBackground;
   if (isAppInForeground) {
     [self appEnteredForeground];
+  } else if (isAppInBackground && self.didCrashInLastSession) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kBITAppWentIntoBackgroundSafely];
   }
 #else
   [self appEnteredForeground];
